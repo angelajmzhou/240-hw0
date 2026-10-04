@@ -100,8 +100,8 @@ fn test_duplicate_string() {
     it's called.
 */
 
-pub fn copy_me(string: &String) -> String {
-    string.clone()
+pub fn copy_me(string: &str) -> String {
+    string.to_string()
 }
 
 #[test]
