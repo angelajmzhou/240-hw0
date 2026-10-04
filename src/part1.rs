@@ -30,11 +30,11 @@
 */
 
 pub fn double_v1(n: i32) -> i32 {
-    return n * 2;
+    n * 2
 }
 
 pub fn double_v2(n: &i32) -> i32 {
-    return *n << 1;
+    *n * 2
 }
 
 pub fn double_v3(n: &mut i32) -> i32 {
@@ -65,8 +65,13 @@ fn test_double_v2() {
 
 #[test]
 fn test_double_v3() {
-    assert_eq!(double_v3(&mut 2), 4);
-    assert_eq!(double_v3(&mut -3), -6);
+    let mut x = 2;
+    assert_eq!(double_v3(&mut x), 4);
+    assert_eq!(x, 4);
+
+    let mut y = -3;
+    assert_eq!(double_v3(&mut y), -6);
+    assert_eq!(y, -6);
 }
 
 /*
@@ -79,7 +84,7 @@ fn test_double_v3() {
 pub fn sqrt(n: usize) -> usize {
     let mut m: usize = n;
     let mut result: usize = 0;
-    let mut bit: usize = 1 << (usize::BITS >> 2);
+    let mut bit: usize = 1 << (usize::BITS - 2);
     while bit > m {
         bit >>= 2;
     }
@@ -110,6 +115,8 @@ fn test_sqrt() {
     assert_eq!(sqrt(64), 8);
     assert_eq!(sqrt(81), 9);
     assert_eq!(sqrt(100), 10);
+    assert_eq!(sqrt(1_000_000), 1_000);
+    assert_eq!(sqrt(usize::MAX), (1usize << (usize::BITS / 2)) - 1);
 }
 
 /*
@@ -123,11 +130,13 @@ fn test_sqrt() {
 
     Which of the two ways do you prefer?
 
-    I prefer sum_v1 bveacuse it doesn't need to implement the copy trait and is more computationally efficient.
+    I prefer sum_v1 because the loop variable is directly an i32, which makes the
+    accumulation a little easier to read. Since i32 implements Copy, both versions
+    are effectively equivalent in performance here.
 */
 pub fn sum_v1(slice: &[i32]) -> i32 {
     // do some initialization...
-    let mut result: i32=0;
+    let mut result: i32 = 0;
     for &v in slice {
         result += v;
     }
@@ -305,7 +314,7 @@ fn test_concat_all() {
 pub fn parse_all(v: Vec<String>) -> Vec<i32> {
     let mut result: Vec<i32> = Vec::new();
     for s in v {
-        result.push(s.parse().unwrap());
+        result.push(s.parse().expect("ignoring error"));
     }
     result
 }
