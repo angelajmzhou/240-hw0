@@ -30,18 +30,18 @@ pub fn split_clone(s: &str) -> Vec<String> {
 // split_clone must have the return type Vec<String>
 
 #[test]
-fn test_split_ref(){
+fn test_split_ref() {
     let string = "Hello World!".to_string();
-    assert_eq!(split_ref(& string), ["Hello", "World!"]);
-    assert_eq!(split_ref("Hello World!"), & ["Hello", "World!"]);
+    assert_eq!(split_ref(&string), ["Hello", "World!"]);
+    assert_eq!(split_ref("Hello World!"), &["Hello", "World!"]);
     assert_eq!(split_ref("Hello World!"), vec!["Hello", "World!"]);
 }
 
 #[test]
-fn test_split_clone(){
+fn test_split_clone() {
     let string = "Hello World!".to_string();
-    assert_eq!(split_clone(& string), ["Hello", "World!"]);
-    assert_eq!(split_clone("Hello World!"), & ["Hello", "World!"]);
+    assert_eq!(split_clone(&string), ["Hello", "World!"]);
+    assert_eq!(split_clone("Hello World!"), &["Hello", "World!"]);
     assert_eq!(split_clone("Hello World!"), vec!["Hello", "World!"]);
 }
 
@@ -64,9 +64,9 @@ pub fn pick_longest(s1: &str, s2: &str) -> String {
 
 
 #[test]
-fn test_pick_longest (){
+fn test_pick_longest() {
     assert_eq!(
-        pick_longest(& "cat".to_string(), & "dog".to_string()),
+        pick_longest(&"cat".to_string(), &"dog".to_string()),
         "cat".to_string()
     );
 }
@@ -79,7 +79,7 @@ fn test_pick_longest (){
 // What goes wrong when you try to implement this function? Why is this
 // the case?
 
-// Need expected named lifetime parameter; 
+// Need expected named lifetime parameter;
 // this function's return type contains a borrowed value,
 // but the signature does not say whether it is borrowed from `s1` or `s2`
 
@@ -121,7 +121,7 @@ fn test_add1() {
     assert_eq!(x, 2);
 }
 
-pub fn add1(x : &mut i32) -> () {
+pub fn add1(x: &mut i32) -> () {
     *x += 1;
 }
 
