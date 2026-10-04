@@ -21,24 +21,32 @@ use std::io::Read;
     as needed.
 */
 
+pub fn split_ref(s: &str) -> Vec<&str> {
+    s.split_whitespace().collect()
+}
+
+pub fn split_clone(s: &str) -> Vec<String> {
+    s.split_whitespace().map(|x| x.to_string()).collect()
+}
 // split_ref must have the return type Vec<&str>
 // split_clone must have the return type Vec<String>
 
-// #[test]
-// fn test_split_ref(){
-//     let string = "Hello World!".to_string();
-//     assert_eq!(split_ref(& string), ["Hello", "World!"]);
-//     assert_eq!(split_ref("Hello World!"), & ["Hello", "World!"]);
-//     assert_eq!(split_ref("Hello World!"), vec!["Hello", "World!"]);
-// }
+#[test]
+fn test_split_ref(){
+    let string = "Hello World!".to_string();
+    assert_eq!(split_ref(& string), ["Hello", "World!"]);
+    assert_eq!(split_ref("Hello World!"), & ["Hello", "World!"]);
+    assert_eq!(split_ref("Hello World!"), vec!["Hello", "World!"]);
+}
 
-// #[test]
-// fn test_split_clone(){
-//     let string = "Hello World!".to_string();
-//     assert_eq!(split_clone(& string), ["Hello", "World!"]);
-//     assert_eq!(split_clone("Hello World!"), & ["Hello", "World!"]);
-//     assert_eq!(split_clone("Hello World!"), vec!["Hello", "World!"]);
-// }
+#[test]
+fn test_split_clone(){
+    let string = "Hello World!".to_string();
+    assert_eq!(split_clone(& string), ["Hello", "World!"]);
+    assert_eq!(split_clone("Hello World!"), & ["Hello", "World!"]);
+    assert_eq!(split_clone("Hello World!"), vec!["Hello", "World!"]);
+}
+
 
 /*
     Problem 2: Longest string
@@ -48,13 +56,22 @@ use std::io::Read;
     Return a new String (we will see later how to return a &str.)
 */
 
-// #[test]
-// fn test_pick_longest {
-//     assert_eq!(
-//         pick_longest(& "cat".to_string(), & "dog".to_string()),
-//         "cat".to_string()
-//     );
-// }
+pub fn pick_longest(s1: &str, s2: &str) -> String {
+    if s1.len() >= s2.len() {
+        s1.to_string()
+    } else {
+        s2.to_string()
+    }
+}
+
+
+#[test]
+fn test_pick_longest (){
+    assert_eq!(
+        pick_longest(& "cat".to_string(), & "dog".to_string()),
+        "cat".to_string()
+    );
+}
 
 // Question 1:
 // For the curious, attempt to return reference, that is:
@@ -64,12 +81,16 @@ use std::io::Read;
 // What goes wrong when you try to implement this function? Why is this
 // the case?
 
+// Need expected named lifetime parameter; 
+// this function's return type contains a borrowed value,
+// but the signature does not say whether it is borrowed from `s1` or `s2`
+
 /*
     Problem 3: File to string
 
     Write a function that returns all the contents of a file as a single String.
 
-    DO NOT USE the assocated function std::fs::read_to_string
+    DO NOT USE the associated function std::fs::read_to_string
 
     Instead use File::open, and the method read_to_string
     (https://doc.rust-lang.org/std/io/trait.Read.html#method.read_to_string)
@@ -79,7 +100,10 @@ use std::io::Read;
 */
 
 pub fn file_to_string(path: &str) -> String {
-    unimplemented!()
+    let mut f = File::open(path).expect("ignoring error opening file");
+    let mut buffer = String::new();
+    f.read_to_string(&mut buffer).expect("ignoring error reading file");
+    buffer
 }
 
 /*
@@ -88,17 +112,19 @@ pub fn file_to_string(path: &str) -> String {
     Why does the following implementation not work as expected?
     Fix by changing the type signature of add1 and the way it's called on add1_test().
     do NOT change the return type.
+
+    The function doesn't work because it doesn't mutate the variable passed to it; it only mutates a local copy.
 */
 
 #[test]
 fn test_add1() {
     let mut x = 1;
-    add1(x);
+    add1(&mut x);
     assert_eq!(x, 2);
 }
 
-pub fn add1(mut x : i32) -> () {
-    x += 1;
+pub fn add1(x : &mut i32) -> () {
+    *x += 1;
 }
 
 /*
@@ -107,11 +133,11 @@ pub fn add1(mut x : i32) -> () {
     The error says: cannot assign to immutable borrowed content `*str1`
     But we declared it mutable? Fix by changing only the line below.
 */
-// pub fn mut2() {
-//     let hello = String::from("hello");
-//
-//     // CHANGE ONLY THIS LINE:
-//     let mut str1: &String = &String::from("str1");
-//
-//     *str1 = hello;
-// }
+pub fn mut2() {
+    let hello = String::from("hello");
+
+    // CHANGE ONLY THIS LINE:
+    let str1: &mut String = &mut String::from("str1");
+
+    *str1 = hello;
+}
