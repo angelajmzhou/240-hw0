@@ -78,7 +78,7 @@ fn copy_int_test() {
 }
 
 // Now implement the following function that duplicates a string n times.
-fn duplicate_string(s: &str, times: usize) -> Vec<String> {
+pub fn duplicate_string(s: &str, times: usize) -> Vec<String> {
     let mut result:Vec<String> = Vec::new();
     for _ in 0..times {
         result.push(s.to_string());
@@ -100,7 +100,7 @@ fn test_duplicate_string() {
     it's called.
 */
 
-fn copy_me(string: &String) -> String {
+pub fn copy_me(string: &String) -> String {
     string.clone()
 }
 
@@ -136,12 +136,12 @@ fn copy_me_test2() {
 */
 // }
 
-fn new_ref_str() -> &'static str {
-    return "Hello";
+pub fn new_ref_str() -> &'static str {
+    "Hello"
 }
 
 //The same function from part2
-fn pick_longest2<'a>(s1: &'a str, s2: &'a str) -> &'a str {
+pub fn pick_longest2<'a>(s1: &'a str, s2: &'a str) -> &'a str {
     if s1.len() > s2.len() { s1 } else { s2 }
 }
 
@@ -181,24 +181,22 @@ fn test_new_ref_str() {
     - Cons: because the Vec isn't a reference, the container itself is still consumed, meaning the caller cannot use it again.
 */
 
-fn pick_longest_in_v1(v: Vec<String>) -> String {
+pub fn pick_longest_in_v1(v: Vec<String>) -> String {
     let mut longest = String::new();
-    for s in v{
-        if s.len() > longest.len() {
+    for s in v {
+        if pick_longest2(&longest, &s) == s {
             longest = s;
         }
     }
     longest
 }
 
-fn pick_longest_in_v2(v: Vec<&str>) -> &str {
-   let mut longest: &str = "";
-   for s in v{
-       if s.len() > longest.len() {
-           longest = s;
-       }
-   }
-   longest
+pub fn pick_longest_in_v2(v: Vec<&str>) -> &str {
+    let mut longest: &str = "";
+    for s in v {
+        longest = pick_longest2(longest, s);
+    }
+    longest
 }
 
 #[test]
@@ -228,7 +226,7 @@ fn test_pick_longest_in_v2() {
     while v2 must allocate a new vector and copy the slice.
 */
 
-fn pad_with_zeros_v1(v: Vec<usize>, desired_len: usize) -> Vec<usize> {
+pub fn pad_with_zeros_v1(v: Vec<usize>, desired_len: usize) -> Vec<usize> {
     if v.len() > desired_len {
         panic!("Vector is larger than the desired length");
     }
@@ -238,7 +236,7 @@ fn pad_with_zeros_v1(v: Vec<usize>, desired_len: usize) -> Vec<usize> {
     result
 }
 
-fn pad_with_zeros_v2(slice: &[usize], desired_len: usize) -> Vec<usize> {
+pub fn pad_with_zeros_v2(slice: &[usize], desired_len: usize) -> Vec<usize> {
     if slice.len() > desired_len {
         panic!("Vector is larger than the desired length");
     }
@@ -248,7 +246,7 @@ fn pad_with_zeros_v2(slice: &[usize], desired_len: usize) -> Vec<usize> {
     result
 }
 
-fn pad_with_zeros_v3(v: &mut Vec<usize>, desired_len: usize) {
+pub fn pad_with_zeros_v3(v: &mut Vec<usize>, desired_len: usize) {
     if v.len() > desired_len {
         panic!("Vector is larger than the desired length");
     }
@@ -297,18 +295,20 @@ fn test_pad_twice_v3() {
     Why is this more general than being passed a Vec<bool>?
 */
 
-fn append_row(grid: &mut Vec<Vec<bool>>, row: Vec<bool>) {
+// Taking ownership of the Vec lets us move the row directly into the grid
+// without cloning it. More generally, this pattern also works for element
+// types that do not implement Clone.
+pub fn append_row(grid: &mut Vec<Vec<bool>>, row: Vec<bool>) {
     grid.push(row);
 }
 
-fn is_first_row(grid: &[Vec<bool>], row: &[bool]) -> bool {
-    if grid.len() == 0 {
-        return false
+// Taking a slice is more general than taking a Vec<bool>: callers can pass a
+// borrowed Vec, an array, or a subslice without transferring ownership.
+pub fn is_first_row(grid: &[Vec<bool>], row: &[bool]) -> bool {
+    if grid.is_empty() {
+        return false;
     }
-    else if grid[0] == row{
-        return true
-    }
-    false
+    grid[0] == row
 }
 
 #[test]
@@ -358,13 +358,13 @@ use std::collections::HashMap;
 // Documentation:
 // https://doc.rust-lang.org/std/collections/struct.HashMap.html
 
-fn vector_to_hashmap(v: &[(i32, String)]) -> HashMap<i32, String> {
-    return v.iter().cloned().collect::<HashMap<i32, String>>();
+pub fn vector_to_hashmap(v: &[(i32, String)]) -> HashMap<i32, String> {
+    v.iter().cloned().collect::<HashMap<i32, String>>()
 }
 
 // Now rewrite this function to delete all entries in hashmap where the keys
 // are negative.
-fn delete_negative_keys(h: &mut HashMap<i32, i32>) {
+pub fn delete_negative_keys(h: &mut HashMap<i32, i32>) {
     // This fails, uncomment to see error.
     h.retain(|k, _| *k >= 0);
 }
@@ -420,7 +420,7 @@ fn test_delete_negative_keys() {
     Use `or_insert` and `and_modify`.
 */
 
-fn merge_maps(
+pub fn merge_maps(
     merged: &mut HashMap<String, String>,
     add: HashMap<String,String>
 ) {
