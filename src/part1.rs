@@ -7,10 +7,8 @@
 */
 
 // Remove these once you are done editing the file!
-// This will result in useful warnings if you missed something.
-#![allow(dead_code)]
-#![allow(unused_variables)]
-
+// This will result in useful warnings if you missed something
+// 
 /*
     Problem 1: Double
 
@@ -19,7 +17,16 @@
     What are some differences between them? Can you write unit tests
     which fail (or fail to compile) for some but not others?
 
+    double_v1: takes ownership of the value and returns a new value.
+    double_v2: takes a reference to the value and returns a new value.
+    double_v3: takes a mutable reference to the value and returns the same value, modified in place.
+
+    As for tests that would fail for some but not others, double_v3 fails if the input isn't mutable.
+
     Which of the three do you prefer?
+
+    I prefer the double_v1 function because dereferencing for such a small value is overkill; it's more
+    efficient to just pass by value.
 */
 
 pub fn double_v1(n: i32) -> i32 {
@@ -27,11 +34,20 @@ pub fn double_v1(n: i32) -> i32 {
 }
 
 pub fn double_v2(n: &i32) -> i32 {
-    return n << 1;
+    return *n << 1;
 }
 
 pub fn double_v3(n: &mut i32) -> i32 {
-    return *n << 2;
+    *n *= 2;
+    *n
+}
+
+#[test]
+fn test_mut_diff() {
+    let x = 5;
+    double_v1(x); // (Takes a copy of the i32)
+    double_v2(&x); // (Takes an immutable reference)
+    //double_v3(&mut x); // cannot borrow x as mutable
 }
 
 // Example unit test (so you can recall the syntax)
@@ -40,15 +56,17 @@ fn test_double_v1() {
     assert_eq!(double_v1(2), 4);
     assert_eq!(double_v1(-3), -6);
 }
-// #[test]
+
+#[test]
 fn test_double_v2() {
     assert_eq!(double_v2(&2), 4);
     assert_eq!(double_v2(&-3), -6);
 }
+
 #[test]
 fn test_double_v3() {
-    assert_eq!(double_v2(&2), 4);
-    assert_eq!(double_v2(&-3), -6);
+    assert_eq!(double_v3(&mut 2), 4);
+    assert_eq!(double_v3(&mut -3), -6);
 }
 
 /*
@@ -246,6 +264,7 @@ pub fn string_concat(s1: String, s2: String) -> String {
     result
 }
 
+#[test]
 fn test_string_concat() {
     assert_eq!(string_concat("Hello".to_string(), " World".to_string()), "Hello World");
 }
