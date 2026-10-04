@@ -121,6 +121,7 @@ fn test_add1() {
     assert_eq!(x, 2);
 }
 
+#[allow(clippy::unused_unit)]
 pub fn add1(x: &mut i32) -> () {
     *x += 1;
 }
