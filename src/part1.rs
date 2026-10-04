@@ -23,16 +23,15 @@
 */
 
 pub fn double_v1(n: i32) -> i32 {
-    unimplemented!()
+    return n * 2;
 }
 
 pub fn double_v2(n: &i32) -> i32 {
-    unimplemented!()
+    return n << 1;
 }
 
-pub fn double_v3(n: &mut i32) {
-    // double n in place
-    unimplemented!()
+pub fn double_v3(n: &mut i32) -> i32 {
+    return *n << 2;
 }
 
 // Example unit test (so you can recall the syntax)
@@ -42,11 +41,20 @@ fn test_double_v1() {
     assert_eq!(double_v1(-3), -6);
 }
 // #[test]
-// fn test_double_v2() {
-// }
-// #[test]
-// fn test_double_v3() {
-// }
+fn test_double_v2() {
+    assert_eq!(double_v2(&2), 4);
+    assert_eq!(double_v2(&-3), -6);
+}
+#[test]
+fn test_double_v3() {
+    let mut x = 2;
+    double_v3(&mut x);
+    assert_eq!(x, 4);
+
+    let mut y = -3;
+    double_v3(&mut y);
+    assert_eq!(y, -6);
+}
 
 /*
     Problem 2: Integer square root
@@ -56,10 +64,40 @@ fn test_double_v1() {
     efficiently than trying every possibility.
 */
 pub fn sqrt(n: usize) -> usize {
-    unimplemented!()
+    let mut m: usize = n;
+    let mut result: usize = 0;
+    let mut bit: usize = 1 << (usize::BITS >> 2);
+    while bit > m {
+        bit >>= 2;
+    }
+    while bit != 0 {
+        if m >= result + bit {
+            m -= result + bit;
+            result = (result >> 1) + bit;
+        } else {
+            result >>= 1;
+        }
+        bit >>= 2;
+    }
+    result
 }
 
 // Remember to write unit tests here (and on all future functions)
+
+#[test]
+fn test_sqrt() {
+    assert_eq!(sqrt(0), 0);
+    assert_eq!(sqrt(1), 1);
+    assert_eq!(sqrt(4), 2);
+    assert_eq!(sqrt(9), 3);
+    assert_eq!(sqrt(16), 4);
+    assert_eq!(sqrt(25), 5);
+    assert_eq!(sqrt(38), 6);
+    assert_eq!(sqrt(55), 7);
+    assert_eq!(sqrt(64), 8);
+    assert_eq!(sqrt(81), 9);
+    assert_eq!(sqrt(100), 10);
+}
 
 /*
     Problem 3: Slice sum
@@ -77,7 +115,7 @@ pub fn sum_v1(slice: &[i32]) -> i32 {
     for &v in slice {
         // ...
     }
-    unimplemented!()
+    result
 }
 
 pub fn sum_v2(slice: &[i32]) -> i32 {
