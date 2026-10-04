@@ -45,7 +45,6 @@ fn test_split_clone() {
     assert_eq!(split_clone("Hello World!"), vec!["Hello", "World!"]);
 }
 
-
 /*
     Problem 2: Longest string
 
@@ -55,13 +54,8 @@ fn test_split_clone() {
 */
 
 pub fn pick_longest(s1: &str, s2: &str) -> String {
-    if s1.len() >= s2.len() {
-        s1.to_string()
-    } else {
-        s2.to_string()
-    }
+    if s1.len() >= s2.len() { s1.to_string() } else { s2.to_string() }
 }
-
 
 #[test]
 fn test_pick_longest() {

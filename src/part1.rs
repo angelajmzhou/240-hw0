@@ -8,7 +8,7 @@
 
 // Remove these once you are done editing the file!
 // This will result in useful warnings if you missed something
-// 
+//
 /*
     Problem 1: Double
 
@@ -275,7 +275,10 @@ pub fn string_concat(s1: String, s2: String) -> String {
 
 #[test]
 fn test_string_concat() {
-    assert_eq!(string_concat("Hello".to_string(), " World".to_string()), "Hello World");
+    assert_eq!(
+        string_concat("Hello".to_string(), " World".to_string()),
+        "Hello World"
+    );
 }
 /*
     Problem 8: String concatenation continued
@@ -294,7 +297,14 @@ pub fn concat_all(v: Vec<String>) -> String {
 
 #[test]
 fn test_concat_all() {
-    assert_eq!(concat_all(vec!["Hello".to_string(), " World".to_string(), "!".to_string()]), "Hello World!");
+    assert_eq!(
+        concat_all(vec![
+            "Hello".to_string(),
+            " World".to_string(),
+            "!".to_string()
+        ]),
+        "Hello World!"
+    );
 }
 
 /*

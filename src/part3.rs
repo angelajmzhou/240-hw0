@@ -21,7 +21,7 @@
        case in Rust?
 
     Don't need to worry about this in rust because the compiler catches it for you.
-    You can't get away with unsafe memory manipulation; it forbids you from 
+    You can't get away with unsafe memory manipulation; it forbids you from
     borrowing a value as mutable more than once at the same time.
 
     (Try writing a unit test where they are both
@@ -90,7 +90,10 @@ pub fn duplicate_string(s: &str, times: usize) -> Vec<String> {
 fn test_duplicate_string() {
     let s = "foo";
     let result = duplicate_string(s, 3);
-    assert_eq!(result, vec!["foo".to_string(), "foo".to_string(), "foo".to_string()]);
+    assert_eq!(
+        result,
+        vec!["foo".to_string(), "foo".to_string(), "foo".to_string()]
+    );
 }
 /*
     Problem 3: String duplication continued
@@ -142,11 +145,7 @@ pub fn new_ref_str() -> &'static str {
 
 //The same function from part2
 pub fn pick_longest2<'a>(s1: &'a str, s2: &'a str) -> &'a str {
-    if s1.len() > s2.len() {
-        s1
-    } else {
-        s2
-    }
+    if s1.len() > s2.len() { s1 } else { s2 }
 }
 
 #[test]
@@ -322,14 +321,12 @@ pub fn is_first_row(grid: &[Vec<bool>], row: &[bool]) -> bool {
 
 #[test]
 fn test_append_row() {
-    let mut matrix: Vec<Vec<bool>> = vec![
-        vec![true, false, true],
-        vec![false, true, true],
-    ];
+    let mut matrix: Vec<Vec<bool>> =
+        vec![vec![true, false, true], vec![false, true, true]];
     let result: Vec<Vec<bool>> = vec![
         vec![true, false, true],
         vec![false, true, true],
-        vec![true, true, true]
+        vec![true, true, true],
     ];
     let v: Vec<bool> = vec![true, true, true];
     append_row(&mut matrix, v);
@@ -338,13 +335,11 @@ fn test_append_row() {
 
 #[test]
 fn test_is_first_row() {
-    let matrix: Vec<Vec<bool>> = vec![
-        vec![true, false, true],
-        vec![false, true, true],
-    ];
+    let matrix: Vec<Vec<bool>> =
+        vec![vec![true, false, true], vec![false, true, true]];
     let empty: Vec<Vec<bool>> = vec![];
     let v1: Vec<bool> = vec![true, true, true];
-    let v2: Vec<bool> = vec![true,false,true];
+    let v2: Vec<bool> = vec![true, false, true];
 
     assert!(is_first_row(&matrix, &v2));
     assert!(!is_first_row(&matrix, &v1));
@@ -379,10 +374,7 @@ pub fn delete_negative_keys(h: &mut HashMap<i32, i32>) {
 
 #[test]
 fn test_vector_to_hashmap() {
-    let v = vec![
-        (1, "cat".to_string()),
-        (2, "dog".to_string()),
-    ];
+    let v = vec![(1, "cat".to_string()), (2, "dog".to_string())];
 
     let hash = vector_to_hashmap(&v);
 
@@ -409,7 +401,6 @@ fn test_delete_negative_keys() {
     assert_eq!(h, result);
 }
 
-
 /*
     Problem 9: The Entry API
 
@@ -431,13 +422,10 @@ fn test_delete_negative_keys() {
 
 pub fn merge_maps(
     merged: &mut HashMap<String, String>,
-    add: HashMap<String, String>
+    add: HashMap<String, String>,
 ) {
     for (k, v) in add {
-        merged
-            .entry(k)
-            .and_modify(|e| e.push_str(&v))
-            .or_insert(v);
+        merged.entry(k).and_modify(|e| e.push_str(&v)).or_insert(v);
     }
 }
 
