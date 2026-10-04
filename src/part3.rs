@@ -79,7 +79,7 @@ fn copy_int_test() {
 
 // Now implement the following function that duplicates a string n times.
 pub fn duplicate_string(s: &str, times: usize) -> Vec<String> {
-    let mut result:Vec<String> = Vec::new();
+    let mut result: Vec<String> = Vec::new();
     for _ in 0..times {
         result.push(s.to_string());
     }
@@ -142,7 +142,11 @@ pub fn new_ref_str() -> &'static str {
 
 //The same function from part2
 pub fn pick_longest2<'a>(s1: &'a str, s2: &'a str) -> &'a str {
-    if s1.len() > s2.len() { s1 } else { s2 }
+    if s1.len() > s2.len() {
+        s1
+    } else {
+        s2
+    }
 }
 
 #[test]
@@ -168,17 +172,22 @@ fn test_new_ref_str() {
     Q1. In pick_longest_in_v2, if you were to explicitly specify the lifetime
         of the input and output, what should it be?
 
-        It would be the lifetime of the data in the vector,like the following 
+        It should be the lifetime of the borrowed strings stored in the vector:
         fn pick_longest_in_v2<'a>(v: Vec<&'a str>) -> &'a str
 
     Q2. What are the pros and cons of v1 and v2?
 
-    pick_longest_in_v1:	
-    - Pros: clean ownership,doesn't need lifetime annotations.
-    - Cons: Consumes vector, caller can't use again
-    pick_longest_in_v2:	zero allocations, fast, but the entire vector and its contents are still consumed.
-    - Pros: zero allocations, which is faster
-    - Cons: because the Vec isn't a reference, the container itself is still consumed, meaning the caller cannot use it again.
+    pick_longest_in_v1:
+    - Pros: it owns the strings, so the returned String is independent of any
+      borrowed input lifetime.
+    - Cons: it consumes the vector and moves its Strings, so the caller cannot
+      use that vector afterward.
+
+    pick_longest_in_v2:
+    - Pros: it returns a borrowed &str and does not clone or allocate string
+      contents.
+    - Cons: it still consumes the Vec container, and the returned &str cannot
+      outlive the underlying string data it refers to.
 */
 
 pub fn pick_longest_in_v1(v: Vec<String>) -> String {
@@ -312,7 +321,7 @@ pub fn is_first_row(grid: &[Vec<bool>], row: &[bool]) -> bool {
 }
 
 #[test]
-fn test_append_row(){
+fn test_append_row() {
     let mut matrix: Vec<Vec<bool>> = vec![
         vec![true, false, true],
         vec![false, true, true],
@@ -320,23 +329,22 @@ fn test_append_row(){
     let result: Vec<Vec<bool>> = vec![
         vec![true, false, true],
         vec![false, true, true],
-        vec![true,true,true]
+        vec![true, true, true]
     ];
-    let v:Vec<bool> = vec![true,true,true];
+    let v: Vec<bool> = vec![true, true, true];
     append_row(&mut matrix, v);
     assert_eq!(matrix, result);
 }
 
 #[test]
-fn test_is_first_row(){
+fn test_is_first_row() {
     let matrix: Vec<Vec<bool>> = vec![
         vec![true, false, true],
         vec![false, true, true],
     ];
-    let empty: Vec<Vec<bool>> = vec![
-    ];
-    let v1:Vec<bool> = vec![true,true,true];
-    let v2:Vec<bool> = vec![true,false,true];
+    let empty: Vec<Vec<bool>> = vec![];
+    let v1: Vec<bool> = vec![true, true, true];
+    let v2: Vec<bool> = vec![true,false,true];
 
     assert!(is_first_row(&matrix, &v2));
     assert!(!is_first_row(&matrix, &v1));
@@ -400,7 +408,8 @@ fn test_delete_negative_keys() {
 
     assert_eq!(h, result);
 }
-        
+
+
 /*
     Problem 9: The Entry API
 
@@ -422,12 +431,13 @@ fn test_delete_negative_keys() {
 
 pub fn merge_maps(
     merged: &mut HashMap<String, String>,
-    add: HashMap<String,String>
+    add: HashMap<String, String>
 ) {
-    for (k,v) in add{
-        merged.entry(k)
-        .and_modify(|e| { e.push_str(&v) })
-        .or_insert(v);
+    for (k, v) in add {
+        merged
+            .entry(k)
+            .and_modify(|e| e.push_str(&v))
+            .or_insert(v);
     }
 }
 
