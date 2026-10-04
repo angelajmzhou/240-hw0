@@ -47,13 +47,8 @@ fn test_double_v2() {
 }
 #[test]
 fn test_double_v3() {
-    let mut x = 2;
-    double_v3(&mut x);
-    assert_eq!(x, 4);
-
-    let mut y = -3;
-    double_v3(&mut y);
-    assert_eq!(y, -6);
+    assert_eq!(double_v2(&2), 4);
+    assert_eq!(double_v2(&-3), -6);
 }
 
 /*
@@ -109,23 +104,40 @@ fn test_sqrt() {
     Clippy should detect if you mess this up.
 
     Which of the two ways do you prefer?
+
+    I prefer sum_v1 bveacuse it doesn't need to implement the copy trait and is more computationally efficient.
 */
 pub fn sum_v1(slice: &[i32]) -> i32 {
     // do some initialization...
+    let mut result: i32=0;
     for &v in slice {
-        // ...
+        result += v;
     }
     result
 }
 
 pub fn sum_v2(slice: &[i32]) -> i32 {
     // do some initialization...
+    let mut result: i32 = 0;
     for v in slice {
-        // ...
+        result += v;
     }
-    unimplemented!()
+    result
 }
 
+#[test]
+fn test_sum_v1() {
+    assert_eq!(sum_v1(&[]), 0);
+    assert_eq!(sum_v1(&[1]), 1);
+    assert_eq!(sum_v1(&[1, 2, 3]), 6);
+}
+
+#[test]
+fn test_sum_v2() {
+    assert_eq!(sum_v2(&[]), 0);
+    assert_eq!(sum_v2(&[1]), 1);
+    assert_eq!(sum_v2(&[1, 2, 3]), 6);
+}
 /*
     Problem 4: Unique
 
@@ -135,7 +147,20 @@ pub fn sum_v2(slice: &[i32]) -> i32 {
 */
 
 pub fn unique(slice: &[i32]) -> Vec<i32> {
-    unimplemented!()
+    let mut result: Vec<i32> = Vec::new();
+    for &v in slice {
+        if !result.contains(&v) {
+            result.push(v);
+        }
+    }
+    result
+}
+
+#[test]
+fn test_unique() {
+    assert_eq!(unique(&[]), vec![]);
+    assert_eq!(unique(&[1]), vec![1]);
+    assert_eq!(unique(&[1, 2, 2, 3]), vec![1, 2, 3]);
 }
 
 /*
@@ -146,7 +171,13 @@ pub fn unique(slice: &[i32]) -> Vec<i32> {
     to know is that pred is a function from i32 to bool.
 */
 pub fn filter(slice: &[i32], pred: impl Fn(i32) -> bool) -> Vec<i32> {
-    unimplemented!()
+    let mut result: Vec<i32> = Vec::new();
+    for &v in slice {
+        if pred(v) {
+            result.push(v);
+        }
+    }
+    result
 }
 
 #[test]
@@ -165,7 +196,26 @@ fn test_filter() {
     where v[i] is the ith fibonacci number.
 */
 pub fn fibonacci(n1: i32, n2: i32, out_size: usize) -> Vec<i32> {
-    unimplemented!()
+    let mut result: Vec<i32> = Vec::with_capacity(out_size);
+    if out_size > 0 {
+        result.push(n1);
+        if out_size > 1 {
+            result.push(n2);
+        }
+    }
+    for i in 2..out_size {
+        let next = result[i - 1] + result[i - 2];
+        result.push(next);
+    }
+    result
+}
+
+#[test]
+fn test_fibonacci() {
+    assert_eq!(fibonacci(0, 1, 0), vec![]);
+    assert_eq!(fibonacci(0, 1, 1), vec![0]);
+    assert_eq!(fibonacci(0, 1, 2), vec![0, 1]);
+    assert_eq!(fibonacci(0, 1, 5), vec![0, 1, 1, 2, 3]);
 }
 
 /*
@@ -177,15 +227,28 @@ pub fn fibonacci(n1: i32, n2: i32, out_size: usize) -> Vec<i32> {
     You may use any standard library function you wish.
 
     What are some reasons the second function is not efficient?
+
+    The second function is not effienct because it transfers ownership of the input strings to the function;
+    furthermore, if called in a hot loop, the allocated strings will have to be deallocated.
 */
 pub fn str_concat(s1: &str, s2: &str) -> String {
-    unimplemented!()
+    format!("{}{}", s1, s2)
+}
+
+#[test]
+fn test_str_concat() {
+    assert_eq!(str_concat("Hello", " World"), "Hello World");
 }
 
 pub fn string_concat(s1: String, s2: String) -> String {
-    unimplemented!()
+    let mut result = s1;
+    result.push_str(&s2);
+    result
 }
 
+fn test_string_concat() {
+    assert_eq!(string_concat("Hello".to_string(), " World".to_string()), "Hello World");
+}
 /*
     Problem 8: String concatenation continued
 
@@ -194,7 +257,16 @@ pub fn string_concat(s1: String, s2: String) -> String {
 */
 
 pub fn concat_all(v: Vec<String>) -> String {
-    unimplemented!()
+    let mut result = String::new();
+    for s in v {
+        result = string_concat(result, s);
+    }
+    result
+}
+
+#[test]
+fn test_concat_all() {
+    assert_eq!(concat_all(vec!["Hello".to_string(), " World".to_string(), "!".to_string()]), "Hello World!");
 }
 
 /*
@@ -212,11 +284,25 @@ pub fn concat_all(v: Vec<String>) -> String {
 */
 
 pub fn parse_all(v: Vec<String>) -> Vec<i32> {
-    unimplemented!()
+    let mut result: Vec<i32> = Vec::new();
+    for s in v {
+        result.push(s.parse().unwrap());
+    }
+    result
+}
+
+#[test]
+fn test_parse_all() {
+    assert_eq!(parse_all(vec!["1".to_string(), "2".to_string()]), vec![1, 2]);
 }
 
 pub fn print_all(v: Vec<i32>) -> Vec<String> {
-    unimplemented!()
+    let mut result: Vec<String> = Vec::new();
+    for s0 in v {
+        let s = format!("{}", s0);
+        result.push(s);
+    }
+    result
 }
 
 #[test]
@@ -243,7 +329,11 @@ fn test_parse_print() {
 */
 
 pub fn concat_even_fibonaccis(n: usize) -> String {
-    unimplemented!()
+    let fibonacci = fibonacci(1, 1, n);
+    let is_even = |x: i32| x % 2 == 0;
+    let even_fibonacci = filter(&fibonacci, is_even);
+    let fib_str = print_all(even_fibonacci);
+    concat_all(fib_str)
 }
 
 #[test]
